@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.eletutour.pokedex.model.EvolutionStep;
@@ -25,7 +26,7 @@ public class PokemonDetailView extends VerticalLayout {
     private final Pokemon pokemon;
 
     private final HorizontalLayout numAndName = new HorizontalLayout();
-    private final Image sprite = new Image();
+    private final HorizontalLayout sprites = new HorizontalLayout();
     private final HorizontalLayout types = new HorizontalLayout();
     private final HorizontalLayout categorie = new HorizontalLayout();
     private final HorizontalLayout talentsLayout = new HorizontalLayout();
@@ -45,7 +46,7 @@ public class PokemonDetailView extends VerticalLayout {
         setAlignItems(Alignment.CENTER);
 
         configureNumAndName();
-        configureSprite();
+        configureSprites();
         configureType();
         configureCategorie();
         configureTailleLayout();
@@ -56,7 +57,7 @@ public class PokemonDetailView extends VerticalLayout {
         configureGigamax();
 
         Button backButton = new Button("Retour liste", e -> getUI().ifPresent(ui -> ui.getPage().executeJs("window.history.back()")));
-        add(numAndName, sprite, types, categorie, tailleLayout, poidsLayout, talentsLayout, eggsLayout, evolutionsLayout, gigamaxLayout, backButton);
+        add(numAndName, sprites, types, categorie, tailleLayout, poidsLayout, talentsLayout, eggsLayout, evolutionsLayout, gigamaxLayout, backButton);
     }
 
     private void configureNumAndName() {
@@ -81,10 +82,25 @@ public class PokemonDetailView extends VerticalLayout {
         numAndName.setWidthFull();
     }
 
-    private void configureSprite() {
-        sprite.setSrc(pokemon.getSprites().getRegular());
-        sprite.setAlt(pokemon.getName().getFr());
-        sprite.setAriaLabel("Artworf of " + pokemon.getName().getFr());
+    private void configureSprites() {
+
+        TabSheet tabSheet = new TabSheet();
+
+        Image regular = new Image();
+        regular.setSrc(pokemon.getSprites().getRegular());
+        regular.setAlt(pokemon.getName().getFr());
+        regular.setAriaLabel("Artworf of " + pokemon.getName().getFr());
+
+        tabSheet.add("Regular", regular);
+
+        Image shiny = new Image();
+        shiny.setSrc(pokemon.getSprites().getShiny());
+        shiny.setAlt(pokemon.getName().getFr());
+        shiny.setAriaLabel("Artworf of shiny " + pokemon.getName().getFr());
+
+        tabSheet.add("Shiny", shiny);
+
+        sprites.add(tabSheet);
     }
 
     private void configureType() {
