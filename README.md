@@ -1,3 +1,5 @@
+[![Java CI with Maven](https://github.com/ErwanLT/Pokedex/actions/workflows/maven.yml/badge.svg)](https://github.com/ErwanLT/Pokedex/actions/workflows/maven.yml)
+
 # Pokedex
 This is a web application built using Spring Boot and Vaadin.<br>
 It provides a Pokedex, a comprehensive guide to all Pokemon species.
@@ -39,6 +41,11 @@ To run the tests, execute the following command:
 ```bash
 mvn test
 ```
+
+## Continuous Integration
+The project uses GitHub Actions for continuous integration and deployment. Every push to the repository will trigger a build and a test.
+
+[![Java CI with Maven](https://github.com/ErwanLT/Pokedex/actions/workflows/maven.yml/badge.svg)](https://github.com/ErwanLT/Pokedex/actions/workflows/maven.yml)
 
 ## Author
 ErwanLT
