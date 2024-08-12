@@ -139,9 +139,12 @@ public class GenView extends VerticalLayout {
         ListDataProvider<Pokemon> dataProvider = (ListDataProvider<Pokemon>) grid.getDataProvider();
         var pokemonFromGrid = dataProvider.getItems();
         if(!StringUtils.isEmpty(value)){
-            grid.setItems(pokemonFromGrid.stream()
+            var filteredPokemon = pokemonFromGrid.stream()
                     .filter(p -> p.getName().getFr().toLowerCase().contains(value.toLowerCase()))
-                    .toList());
+                    .toList();
+            grid.setItems(filteredPokemon);
+            grid.getColumns().getFirst()
+                    .setFooter(String.format("%s pokemons", filteredPokemon.size()));
         } else {
             updateListGen();
         }
