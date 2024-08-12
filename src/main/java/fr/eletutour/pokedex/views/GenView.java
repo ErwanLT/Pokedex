@@ -75,7 +75,10 @@ public class GenView extends VerticalLayout {
             case "Paldéa" ->9;
             default -> throw new IllegalStateException("Unexpected value: " + select.getValue());
         };
-        grid.setItems(service.getGenerations().get(gen));
+        List<Pokemon> pokemons = service.getGenerations().get(gen);
+        grid.getColumns().getFirst()
+                        .setFooter(String.format("%s pokemons", pokemons.size()));
+        grid.setItems(pokemons);
     }
 
     private void configureGrid() {

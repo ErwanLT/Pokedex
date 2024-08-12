@@ -11,6 +11,8 @@ import com.vaadin.flow.router.Route;
 import fr.eletutour.pokedex.model.Type;
 import fr.eletutour.pokedex.service.PokemonService;
 
+import java.util.Set;
+
 @Route(value = "types", layout = MainView.class)
 @PageTitle(value = "Types")
 public class TypesListView extends VerticalLayout {
@@ -23,7 +25,6 @@ public class TypesListView extends VerticalLayout {
         setSizeFull();
         configureGrid();
         add(getContent());
-        updateList();
     }
 
     private Component getContent() {
@@ -33,12 +34,10 @@ public class TypesListView extends VerticalLayout {
         return content;
     }
 
-
-    private void updateList() {
-        grid.setItems(pokemonService.findAllTypes());
-    }
-
     private void configureGrid() {
+
+        Set<Type> types = pokemonService.findAllTypes();
+
         grid.addClassNames("contact-grid");
         grid.setSizeFull();
         grid.setColumns("name");
@@ -49,8 +48,11 @@ public class TypesListView extends VerticalLayout {
             img.setHeight(40, Unit.PIXELS);
             img.setWidth(40, Unit.PIXELS);
             return img;
-        }).setHeader("Sprite");
+        }).setHeader("Sprite")
+                .setFooter(String.format("%s types", types.size()));;
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
+
+        grid.setItems(types);
     }
 }
