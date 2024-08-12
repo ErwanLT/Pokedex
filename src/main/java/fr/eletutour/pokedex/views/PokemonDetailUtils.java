@@ -1,11 +1,13 @@
 package fr.eletutour.pokedex.views;
 
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import fr.eletutour.pokedex.model.Pokemon;
 
 public class PokemonDetailUtils {
 
@@ -24,14 +26,49 @@ public class PokemonDetailUtils {
         return layout;
     }
 
-    public static void addEvolutionStep(VerticalLayout evolutionLayout, String name, String spriteUrl, String condition, String className) {
-        VerticalLayout evoStep = new VerticalLayout(FlexComponent.JustifyContentMode.CENTER);
+    public static HorizontalLayout numAndNameLayout(Pokemon pokemon){
+        HorizontalLayout numAndName = new HorizontalLayout();
 
-        HorizontalLayout nameLayout = new HorizontalLayout(new H4(name));
-        nameLayout.setWidthFull();
-        nameLayout.addClassNames("type", className);
-        nameLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        nameLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        var numFormat = String.format("%04d", pokemon.getPokedexId());
+        VerticalLayout numero = new VerticalLayout(new H3("N°" + numFormat));
+        VerticalLayout nom = new VerticalLayout(new H3(pokemon.getName().getFr()));
+
+        switch (pokemon.getTypes().size()){
+            case 1 :
+                numero.addClassName(pokemon.getTypes().getFirst().getName().toLowerCase());
+                numero.addClassNames("explain","type","entete");
+                break;
+            case 2 :
+                numero.addClassName(pokemon.getTypes().get(1).getName().toLowerCase());
+                numero.addClassNames("explain","type","entete");
+                break;
+        }
+        nom.addClassName(pokemon.getTypes().getFirst().getName().toLowerCase());
+        nom.addClassName("type");
+
+        numAndName.add(numero, nom);
+        numAndName.setWidthFull();
+
+        return numAndName;
+    }
+
+    public static void addEvolutionStep(VerticalLayout layout, Pokemon pokemon, String condition, String className) {
+        addEvolutionStep(layout, "N°" + String.format("%04d", pokemon.getPokedexId()) + " " + pokemon.getName().getFr(), pokemon.getSprites().getRegular(), condition, className, pokemon);
+    }
+
+
+    public static void addEvolutionStep(VerticalLayout evolutionLayout, String name, String spriteUrl, String condition, String className, Pokemon pokemon) {
+        VerticalLayout evoStep = new VerticalLayout(FlexComponent.JustifyContentMode.CENTER);
+        HorizontalLayout nameLayout;
+        if(pokemon == null) {
+            nameLayout= new HorizontalLayout(new H4(name));
+            nameLayout.setWidthFull();
+            nameLayout.addClassNames("type", className);
+            nameLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+            nameLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        } else {
+            nameLayout = numAndNameLayout(pokemon);
+        }
 
         HorizontalLayout spriteLayout = new HorizontalLayout();
         Image sprite = new Image(spriteUrl, name);

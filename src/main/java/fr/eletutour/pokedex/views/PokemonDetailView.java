@@ -23,7 +23,7 @@ public class PokemonDetailView extends VerticalLayout {
     private final PokemonService pokemonService;
     private final NavigationService navigationService;
 
-    private final Pokemon pokemon;
+    private Pokemon pokemon;
 
     private final HorizontalLayout numAndName = new HorizontalLayout();
     private final HorizontalLayout sprites = new HorizontalLayout();
@@ -45,7 +45,6 @@ public class PokemonDetailView extends VerticalLayout {
         setSizeFull();
         setAlignItems(Alignment.CENTER);
 
-        configureNumAndName();
         configureSprites();
         configureType();
         configureCategorie();
@@ -57,29 +56,11 @@ public class PokemonDetailView extends VerticalLayout {
         configureGigamax();
 
         Button backButton = new Button("Retour liste", e -> getUI().ifPresent(ui -> ui.getPage().executeJs("window.history.back()")));
-        add(numAndName, sprites, types, categorie, tailleLayout, poidsLayout, talentsLayout, eggsLayout, evolutionsLayout, gigamaxLayout, backButton);
+        add(configureNumAndName(), sprites, types, categorie, tailleLayout, poidsLayout, talentsLayout, eggsLayout, evolutionsLayout, gigamaxLayout, backButton);
     }
 
-    private void configureNumAndName() {
-        var numFormat = String.format("%04d", pokemon.getPokedexId());
-        VerticalLayout numero = new VerticalLayout(new H3("N°" + numFormat));
-        VerticalLayout nom = new VerticalLayout(new H3(pokemon.getName().getFr()));
-
-        switch (pokemon.getTypes().size()){
-            case 1 :
-                numero.addClassName(pokemon.getTypes().getFirst().getName().toLowerCase());
-                numero.addClassNames("explain","type","entete");
-                break;
-            case 2 :
-                numero.addClassName(pokemon.getTypes().get(1).getName().toLowerCase());
-                numero.addClassNames("explain","type","entete");
-                break;
-        }
-        nom.addClassName(pokemon.getTypes().getFirst().getName().toLowerCase());
-        nom.addClassName("type");
-
-        numAndName.add(numero, nom);
-        numAndName.setWidthFull();
+    private HorizontalLayout configureNumAndName() {
+        return PokemonDetailUtils.numAndNameLayout(pokemon);
     }
 
     private void configureSprites() {
@@ -194,7 +175,7 @@ public class PokemonDetailView extends VerticalLayout {
             nom.addClassName(pre.getTypes().getFirst().getName().toLowerCase());
             nom.addClassName("type");
 
-            PokemonDetailUtils.addEvolutionStep(preEvolutionLayout, "N°" + String.format("%04d", pre.getPokedexId()) + " " + pre.getName().getFr(), pre.getSprites().getRegular(), "", pokemon.getTypes().getFirst().getName().toLowerCase());
+            PokemonDetailUtils.addEvolutionStep(preEvolutionLayout, pre, "", pokemon.getTypes().getFirst().getName().toLowerCase());
 
             stepLayout.add(preEvolutionLayout);
         }
@@ -208,7 +189,7 @@ public class PokemonDetailView extends VerticalLayout {
 
             for (EvolutionStep step : pokemon.getEvolution().getNext()) {
                 Pokemon next = pokemonService.findById(step.getPokedexId());
-                PokemonDetailUtils.addEvolutionStep(nextEvolutionLayout, "N°" + String.format("%04d", next.getPokedexId()) + " " + next.getName().getFr(), next.getSprites().getRegular(), step.getCondition(), pokemon.getTypes().getFirst().getName().toLowerCase());
+                PokemonDetailUtils.addEvolutionStep(nextEvolutionLayout, next, step.getCondition(), pokemon.getTypes().getFirst().getName().toLowerCase());
             }
 
             stepLayout.add(nextEvolutionLayout);
@@ -222,7 +203,7 @@ public class PokemonDetailView extends VerticalLayout {
             megaEvolutionLayout.add(megaEvolutionLabel);
 
             for (MegaEvolution mega : pokemon.getEvolution().getMega()) {
-                PokemonDetailUtils.addEvolutionStep(megaEvolutionLayout, "", mega.getSprites().getRegular(), mega.getOrbe(), pokemon.getTypes().getFirst().getName().toLowerCase());
+                PokemonDetailUtils.addEvolutionStep(megaEvolutionLayout, "", mega.getSprites().getRegular(), mega.getOrbe(), pokemon.getTypes().getFirst().getName().toLowerCase(), null);
             }
 
             stepLayout.add(megaEvolutionLayout);
