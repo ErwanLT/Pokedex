@@ -7,14 +7,18 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import fr.eletutour.pokedex.model.Pokemon;
 import fr.eletutour.pokedex.service.NavigationService;
 import fr.eletutour.pokedex.service.PokemonService;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
@@ -24,6 +28,7 @@ public class GenView extends VerticalLayout {
 
     Grid<Pokemon> grid = new Grid<>(Pokemon.class);
     Select<String> select = new Select<>();
+    TextField search = new TextField();
 
     PokemonService service;
     NavigationService navigationService;
@@ -35,8 +40,8 @@ public class GenView extends VerticalLayout {
         configureSelect();
         configureGrid();
 
-        add(getToolbar(), getContent());
-        updateList();
+        add(getSelect(), getSearch(), getContent());
+        updateListGen();
     }
 
     private void configureSelect() {
@@ -62,7 +67,7 @@ public class GenView extends VerticalLayout {
         return content;
     }
 
-    private void updateList() {
+    private void updateListGen() {
         var gen = switch(select.getValue()) {
             case "Kanto" -> 1;
             case "Johto" -> 2;
@@ -79,6 +84,7 @@ public class GenView extends VerticalLayout {
         grid.getColumns().getFirst()
                         .setFooter(String.format("%s pokemons", pokemons.size()));
         grid.setItems(pokemons);
+        search.clear();
     }
 
     private void configureGrid() {
@@ -112,11 +118,32 @@ public class GenView extends VerticalLayout {
 
     }
 
-    private HorizontalLayout getToolbar() {
-        select.addValueChangeListener(e -> updateList());
+    private HorizontalLayout getSelect() {
+        select.addValueChangeListener(e -> updateListGen());
 
         var toolbar = new HorizontalLayout(select);
         toolbar.addClassName("toolbar");
         return toolbar;
+    }
+
+    private Component getSearch() {
+        search.setLabel("Nom");
+        search.setPrefixComponent(VaadinIcon.SEARCH.create());
+        search.addValueChangeListener(e -> updateListSearch(e.getValue()));
+        search.setClearButtonVisible(true);
+
+        return new HorizontalLayout(search);
+    }
+
+    private void updateListSearch(String value) {
+        ListDataProvider<Pokemon> dataProvider = (ListDataProvider<Pokemon>) grid.getDataProvider();
+        var pokemonFromGrid = dataProvider.getItems();
+        if(!StringUtils.isEmpty(value)){
+            grid.setItems(pokemonFromGrid.stream()
+                    .filter(p -> p.getName().getFr().toLowerCase().contains(value.toLowerCase()))
+                    .toList());
+        } else {
+            updateListGen();
+        }
     }
 }
