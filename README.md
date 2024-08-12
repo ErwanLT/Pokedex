@@ -5,9 +5,9 @@ This is a web application built using Spring Boot and Vaadin.<br>
 It provides a Pokedex, a comprehensive guide to all Pokemon species.
 
 ## Features
-* Pokemon listing by generation
+* Browse through Pokemon generation
+  * Find them by name
 * View detailed information about each Pokemon, including types, abilities, and evolutions
-* Browse through Pokemon by type or generation
 
 
 ## Built With
