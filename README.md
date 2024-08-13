@@ -26,6 +26,7 @@ The project uses GitHub Actions for continuous integration and deployment. Every
 ErwanLT
 * Github: [@ErwanLT](https://github.com/ErwanLT)
 * X: [ErwanLeTutour](https://twitter.com/ErwanLeTutour)
+* LinkedIn : [Erwan LE TUTOUR](https://www.linkedin.com/in/erwan-le-tutour/)
 
 ## Show your support
 Give a ⭐️ if this project helped you!
