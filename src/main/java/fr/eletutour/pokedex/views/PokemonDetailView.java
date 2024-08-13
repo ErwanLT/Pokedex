@@ -7,10 +7,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import fr.eletutour.pokedex.model.EvolutionStep;
-import fr.eletutour.pokedex.model.MegaEvolution;
-import fr.eletutour.pokedex.model.Pokemon;
-import fr.eletutour.pokedex.model.Talent;
+import fr.eletutour.pokedex.model.*;
 import fr.eletutour.pokedex.service.NavigationService;
 import fr.eletutour.pokedex.service.PokemonService;
 import org.springframework.util.CollectionUtils;
@@ -65,23 +62,35 @@ public class PokemonDetailView extends VerticalLayout {
 
     private void configureSprites() {
 
-        TabSheet tabSheet = new TabSheet();
+        TabSheet spritesTabSheet = new TabSheet();
+        TabSheet normalForm = tabSprite(pokemon);
+        spritesTabSheet.add("Forme classique", normalForm);
+        if(!CollectionUtils.isEmpty(pokemon.getFormes())){
+            TabSheet regionalForm = new TabSheet();
+            for (Forme forme : pokemon.getFormes()){
+                Pokemon p = pokemonService.findByName(forme.getName());
+                regionalForm.add(forme.getRegion(), tabSprite(p));
+            }
+            spritesTabSheet.add("Forme régionale", regionalForm);
+        }
 
+        sprites.add(spritesTabSheet);
+    }
+
+    private TabSheet tabSprite(Pokemon p) {
+        TabSheet normalForm = new TabSheet();
         Image regular = new Image();
-        regular.setSrc(pokemon.getSprites().getRegular());
-        regular.setAlt(pokemon.getName().getFr());
-        regular.setAriaLabel("Artworf of " + pokemon.getName().getFr());
-
-        tabSheet.add("Regular", regular);
+        regular.setSrc(p.getSprites().getRegular());
+        regular.setAlt(p.getName().getFr());
+        regular.setAriaLabel("Artworf of " + p.getName().getFr());
+        normalForm.add("Regular", regular);
 
         Image shiny = new Image();
-        shiny.setSrc(pokemon.getSprites().getShiny());
-        shiny.setAlt(pokemon.getName().getFr());
-        shiny.setAriaLabel("Artworf of shiny " + pokemon.getName().getFr());
-
-        tabSheet.add("Shiny", shiny);
-
-        sprites.add(tabSheet);
+        shiny.setSrc(p.getSprites().getShiny());
+        shiny.setAlt(p.getName().getFr());
+        shiny.setAriaLabel("Artworf of shiny " + p.getName().getFr());
+        normalForm.add("Shiny", shiny);
+        return normalForm;
     }
 
     private void configureType() {

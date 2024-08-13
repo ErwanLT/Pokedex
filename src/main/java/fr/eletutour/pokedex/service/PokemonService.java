@@ -1,6 +1,7 @@
 package fr.eletutour.pokedex.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fr.eletutour.pokedex.model.Name;
 import fr.eletutour.pokedex.model.Pokemon;
 import fr.eletutour.pokedex.model.Type;
 import jakarta.annotation.PostConstruct;
@@ -69,6 +70,12 @@ public class PokemonService {
         List<Pokemon> pokemons = loadPokemonFromJson();
         return pokemons.stream()
                 .filter(pokemon -> pokemon.getPokedexId() == pokedexId )
-                .toList().get(0);
+                .toList().getFirst();
+    }
+
+    public Pokemon findByName(Name name) {
+        return allPokemon.stream()
+                .filter(pokemon -> pokemon.getName().getFr().equals(name.getFr()))
+                .toList().getFirst();
     }
 }
